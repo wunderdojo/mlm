@@ -32,11 +32,11 @@ class videoWidget extends WP_Widget {
 			echo $before_title . $title . $after_title;
                 
                 /* get all of the posts from the category video, excluding the one currently being
-                 * displayed if on a single post page. If on any other type of page then no offset needed.
+                 * displayed if on a single post page. If on any other type of page then no exclusion is needed.
                  */
-                $offset = (is_single())?'1':'0';
+                $exclude = (is_single()) ? $post->ID:'';
                 $posts = get_posts(array(
-                        'offset'=>$offset,
+                        'exclude'=>$exclude,
                         'category_name'=>'episode'      
                 ));
                 if($posts):?>
@@ -50,8 +50,8 @@ class videoWidget extends WP_Widget {
                   </ul>
                 <?php else:
                 $output='no posts found';
-                endif;
                 echo $output;
+                endif;
     
 	/* After widget (defined by themes). */
 		echo $after_widget;

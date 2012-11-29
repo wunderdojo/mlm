@@ -18,6 +18,7 @@ class zelcodes {
     $plugin_directory = dirname(__FILE__) . DIRECTORY_SEPARATOR;
     require_once('custom-widgets.php');
     add_action('widgets_init', create_function('', 'return register_widget("videoWidget");'));
+    add_shortcode('zelposts', array(&$this, 'processShortCodes'));
     }
     
     public function get_video_thumbnail($post) {
@@ -43,6 +44,34 @@ class zelcodes {
             }
         }
     }
+    
+    function processShortCodes($atts, $content, $code){
+            if($code=='zelposts'){
+               extract($atts);
+               $categories=($categories)?explode(",", $categories):'';
+               if($categories){
+                    foreach($categories as $category){
+                        $catid[] = get_category_by_slug( $category )->term_id;
+                    }
+               }
+               $myposts = get_posts(array(
+                        'category__in'=>$catid,
+                        'numberposts'=>$number
+                        ));
+                    if($myposts):
+                        $output.="<ul class='videos'>";
+                        foreach($myposts as $mypost): setup_postdata($mypost);
+                            $output.="<li><h2 class='headline'><a href='".get_permalink()."'>".$mypost->post_title."</a></h2></li>";
+                            $output.= "<li>".apply_filters('the_content',get_the_content( $more_link_text, $stripteaser, $more_file ))."</li>";
+                        /* show number of comments */
+                        endforeach;
+                        $output.="</ul>";
+                        else:
+                        $output='no posts found';
+                    endif;
+                   return $output;
+                }
+           }//end processShortCodes
 
 }//end of class
 $ZELCODE = new zelcodes();
