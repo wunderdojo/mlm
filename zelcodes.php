@@ -63,12 +63,12 @@ class zelcodes {
                     if($myposts):
                         $output.="<ul class='videos'>";
                         foreach($myposts as $mypost): setup_postdata($mypost);
-                            $output.="<li><h2 class='headline'><a href='".get_permalink()."'>".$mypost->post_title."</a></h2></li>";
+                            $output.="<li><h2 class='headline'><a href='".get_permalink($mypost->ID)."'>".$mypost->post_title."</a></h2></li>";
                             /* Here need to filter out any video shortcodes from within the post body
                              * and replace them with thumbnails or video screenshots
                              */
                             $image = $this->get_video_thumbnail($mypost, 'max');
-                            $image = sprintf('<a href="'.get_permalink($post->ID).'"><img src="%s" /></a>',$image);
+                            $image = sprintf('<a href="'.get_permalink($mypost->ID).'"><img src="%s" /></a>',$image);
                             $pattern = get_shortcode_regex();
                             if (   preg_match_all( '/'. $pattern .'/s', $mypost->post_content, $matches )
             && array_key_exists( 2, $matches ) && (in_array( 'youtube', $matches[2] ) || in_array('vimeo', $matches[2]))){
