@@ -44,7 +44,8 @@ class videoWidget extends WP_Widget {
                     <?php foreach($posts as $post): ?>
                         <li><a href='<?php the_permalink();?>'><?php the_title();?></a></li>
                         <?php /* now get the video or post thumbnail and display as a link */
-                        $ZELCODE->get_video_thumbnail($post);
+                        $image = $ZELCODE->get_video_thumbnail($post, 'small');
+                        printf('<a href="'.get_permalink($post->ID).'"><img src="%s" /></a>',$image); 
                         ?>
                     <?php endforeach; ?>
                   </ul>
