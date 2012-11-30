@@ -82,7 +82,7 @@ class zelcodes {
                     if($myposts):
                         $output.="<ul class='videos'>";
                         foreach($myposts as $mypost): setup_postdata($mypost);
-                            $output.="<li><h2 class='headline'><a href='".get_permalink($mypost->ID)."'>".$mypost->post_title."</a></h2></li>";
+                            $output.="<li><h2 class='headline'><a href='".get_permalink($mypost->ID)."'>".$mypost->post_title."</a></h2>";
                             /* Here need to filter out any video shortcodes from within the post body
                              * and replace them with thumbnails or video screenshots
                              */
@@ -95,7 +95,7 @@ class zelcodes {
                             $shortcode = $matches[2][0];
                             $newcontent = preg_replace('~^\['.$shortcode.'.*\]~',$image, $mypost->post_content);
                                 }
-                            $output.= "<li>".apply_filters('the_content',$newcontent)."</li>";
+                            $output.= apply_filters('the_content',$newcontent)."</li>";
                         /* show number of comments */
                         endforeach; wp_reset_postdata();
                         $output.="</ul>";
