@@ -40,7 +40,8 @@ class zelcodes {
             /* it has a vimeo video */
             $video_id = end(explode("/",$matches[5][0]));
             $hash = unserialize(file_get_contents("http://vimeo.com/api/v2/video/".$video_id.".php"));
-            $image = $hash[0]["thumbnail_medium"];
+            //print_r($hash);
+            $image = $hash[0]["thumbnail_large"];
             }
             }
         }
@@ -56,10 +57,28 @@ class zelcodes {
                         $catid[] = get_category_by_slug( $category )->term_id;
                     }
                }
-               $myposts = get_posts(array(
+               global $paged;
+               $paged= (get_query_var('page')) ? get_query_var('page') : 1;
+               if( get_query_var( 'paged' ) )
+                $my_page = get_query_var( 'paged' );
+                else {
+                if( get_query_var( 'page' ) )
+		$my_page = get_query_var( 'page' );
+                else
+		$my_page = 1;
+                set_query_var( 'page', $my_page );
+                $paged = $my_page;
+                }
+                global $wp_query;
+               $args = array(
                         'category__in'=>$catid,
-                        'numberposts'=>$number
-                        ));
+                        'posts_per_page'=>$number,
+                        'paged'=>$my_page
+                        );
+               
+               $results = new WP_Query($args);
+               $myposts = $results->posts;
+               $pagecount = $results->max_num_pages;
                     if($myposts):
                         $output.="<ul class='videos'>";
                         foreach($myposts as $mypost): setup_postdata($mypost);
@@ -78,8 +97,9 @@ class zelcodes {
                                 }
                             $output.= "<li>".apply_filters('the_content',$newcontent)."</li>";
                         /* show number of comments */
-                        endforeach;
+                        endforeach; wp_reset_postdata();
                         $output.="</ul>";
+                        $output.=  "<div style='float:left'>".get_previous_posts_link('&laquo; Newer posts', $pagecount)."</div>&nbsp;&nbsp;<div style='float:right'>".get_next_posts_link('Older posts &raquo;', $pagecount)."</div>";
                         else:
                         $output='no posts found';
                     endif;
